@@ -23,17 +23,14 @@ class TestApi extends Controller
 
     public function login(Request $request)
     {
-        $nom_utilisateur = $request->input('nom_utilisateur');
-        $motpasse_utilisateur = $request->input('motpasse_utilisateur');
+        $nom_user = $request->input('nom_user');
+        $mdp_user = $request->input('mdp_user');
 
-        $hashedPassword = Hash::make($motpasse_utilisateur);
+        $user = User::where('nom_user', $nom_user)->first();
 
-
-        $user = User::where('nom_utilisateur', $nom_utilisateur)->first();
-
-        if ($user ) {
+        if ($user && md5($mdp_user)==$user->mdp_user ) {
             $token = $this->guard()->login($user);
-            return response()->json(['token' => $token,'hase'=>$hashedPassword], 200);
+            return response()->json(['token' => $token], 200);
         }
 
         return response()->json(['error' => 'Unauthorized'], 401);

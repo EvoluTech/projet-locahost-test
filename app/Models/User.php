@@ -12,24 +12,26 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-
     use Notifiable;
-    protected $table = 'utilisateur';
+    protected $table = 'users';
 
-    protected $primaryKey = 'id_utilisateur';
+    protected $primaryKey = 'id_user';
 
     protected $fillable = [
-        'nom_utilisateur',
-        'motpasse_utilisateur',
+        'nom_user',
+        'prenom_user',
+        'mdp_user',
+        'type_user',
+        'adresse_user',
     ];
 
     protected $hidden = [
-        'motpasse_utilisateur',
+        'mdp_user',
     ];
 
     public function getAuthPassword()
     {
-        return $this->motpasse_utilisateur;
+        return $this->mdp_user;
     }
     public function getJWTIdentifier()
     {
@@ -40,6 +42,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
-    
 }
