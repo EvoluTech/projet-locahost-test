@@ -18,11 +18,13 @@ class TestApi extends Controller
 
     public function __construct()
     {
+        //middleware : anelan'elan'ny controller sy route,eto zao token ny middleware
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     public function login(Request $request)
     {
+        //mandray an'ilay données(request)
         $nom_user = $request->input('nom_user');
         $mdp_user = $request->input('mdp_user');
 
