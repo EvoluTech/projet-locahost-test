@@ -18,11 +18,14 @@ class TestApi extends Controller
 
     public function __construct()
     {
+        //middleware = polisy misava ticket
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     public function login(Request $request)
     {
+        //request eto dia mandray an le post fa mbola tsy mverifier
+
         $nom_user = $request->input('nom_user');
         $mdp_user = $request->input('mdp_user');
 
