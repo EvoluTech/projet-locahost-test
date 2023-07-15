@@ -13,5 +13,9 @@ use App\Http\Controllers\TestApi;
 |
 */
 
+Route::middleware('verify.token')->group(function() {
+    Route::post('/login', [TestApi::class, 'login']);
+});
 
-Route::post('/login', [TestApi::class, 'login']);
+
+
