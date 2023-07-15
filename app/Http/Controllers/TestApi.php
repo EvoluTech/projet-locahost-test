@@ -19,7 +19,6 @@ class TestApi extends Controller
     public function __construct()
     {
         //middleware = polisy misava ticket
-        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     public function login(Request $request)

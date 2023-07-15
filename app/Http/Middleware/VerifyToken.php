@@ -22,7 +22,7 @@ class VerifyToken
             $user = Auth::guard('api')->user();
 
             if(!user){
-                throw new AuthorizationException('Unauthrized');
+                throw new AuthorizationException('Unauthrized!!');
             }
             return $next($request);
         }
