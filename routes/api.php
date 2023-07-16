@@ -12,9 +12,10 @@ use App\Http\Controllers\TestApi;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::post('/login', [TestApi::class, 'login']);
+Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
 Route::middleware('verify.token')->group(function() {
-    Route::post('/login', [TestApi::class, 'login']);
+    
 });
 
 

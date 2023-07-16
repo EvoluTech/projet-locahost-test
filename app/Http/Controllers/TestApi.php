@@ -30,20 +30,45 @@ class TestApi extends Controller
 
         $user = User::where('nom_user', $nom_user)->first();
 
-        if ($user && md5($mdp_user)==$user->mdp_user ) {
+        if ($user && $mdp_user==$user->mdp_user) {
+
             $token = $this->guard()->login($user);
-            return response()->json(['token' => $token], 200);
+            return response()->json(
+                [
+                    'token' => $token,
+                    'message' => 'Bienvenue',
+                    'status' => true
+                ], 
+                
+            200);
         }
 
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => $this->guard()->factory()->getTTL() * 60
-        ]);
+    public function creerCompte(Request $request) {
+        $id_user=$request->input('id_user');
+        $nom_user=$request->input('nom_user');
+        $prenom_user=$request->input('prenom_user');
+        $mdp_user=$request->input('mdp_user');
+        $type_user=$request->input('type_user');
+        $adresse_user=$request->input('adresse_user');
+        $adresse_mail=$request->input('adresse_mail');
+
+        $insertion=DB::insert("INSERT INTO public.users(
+            id_user, nom_user, prenom_user, mdp_user, type_user, adresse_user, adresse_mail)
+            VALUES ('".$id_user."', '".$nom_user."', '".$prenom_user."', '".$mdp_user."', '".$type_user."', '".$adresse_user."', '".$adresse_mail."');");
+
+            if ($insertion){
+                return response()->json(
+                    [
+                        'message' => 'Réussie',
+                        'status' => true
+                    ], 
+                    
+                200);
+            }
+
+            return response()->json(['error' => 'Echec'], 401);
     }
 }
