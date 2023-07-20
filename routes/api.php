@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestApi;
 use App\Http\Controllers\Categorie;
+use App\Http\Controllers\Login;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,11 +14,13 @@ use App\Http\Controllers\Categorie;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/login', [TestApi::class, 'login']);
+// Route::post('/login', [TestApi::class, 'login']);
+Route::post('/login', [Login::class, 'login']);
+Route::post('/register', [Login::class, 'register']);
 Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
 Route::post('/insertionCategorie', [Categorie::class, 'insertionCategorie']);
 Route::middleware('verify.token')->group(function() {
-
+    
 });
 
 
