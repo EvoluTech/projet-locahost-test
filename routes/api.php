@@ -13,11 +13,12 @@ use App\Http\Controllers\TestApi;
 |
 */
 
+Route::post('/login', [TestApi::class, 'login']);
+Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
 Route::middleware('verify.token')->group(function(){
 
-    Route::post('/login', [TestApi::class, 'login']);
-    
+
     Route::post('/testProtectedRoute', [TestApi::class, 'testProtectedRoute']);
-    
+
 });
 

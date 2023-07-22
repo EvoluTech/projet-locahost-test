@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 
 class VerifyToken
@@ -21,7 +22,7 @@ class VerifyToken
         try {
             $user = Auth::guard('api')->user();
 
-            if(!user){
+            if(!$user){
                 throw new AuthorizationException('Unauthrized!!');
             }
             return $next($request);

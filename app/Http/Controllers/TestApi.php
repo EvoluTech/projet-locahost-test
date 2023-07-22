@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class TestApi extends Controller
 {
@@ -32,10 +33,21 @@ class TestApi extends Controller
 
         if ($user && md5($mdp_user)==$user->mdp_user ) {
             $token = $this->guard()->login($user);
-            return response()->json(['token' => $token], 200);
+            return response()->json(
+                [
+                    'token' => $token
+                ]
+                ,
+                 200
+                );
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(
+            [
+                'error' => 'Unauthorized'
+            ]
+            , 401
+        );
     }
 
     protected function respondWithToken($token)
@@ -46,4 +58,65 @@ class TestApi extends Controller
             'expires_in' => $this->guard()->factory()->getTTL() * 60
         ]);
     }
+    public function creerCompte(Request $request) {
+        $validator = Validator::make($request->all(), [
+                'id_user'=> 'required|integer',
+                'nom_user' => 'required|string|max:255',
+                'prenom_user' => 'required|string|max:255',
+                'mdp_user' => 'required|string|min:8',
+                'type_user' => 'required|string',
+                'adresse_user' => 'required|string|max:255',
+                'adress_email' => 'required|email|unique:users',
+            ], [
+                'required' => 'Le champ :attribute est obligatoire.',
+                'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+                'max' => 'Le champ :attribute ne doit pas dépasser :max caractères.',
+                'min' => 'Le champ :attribute doit contenir au moins :min caractères.',
+                'email' => 'L\'adresse email saisie n\'est pas valide.',
+                'unique' => 'L\'adresse email est déjà utilisée par un autre utilisateur.',
+            ]);
+
+            if ($validator->fails()) {
+                // Renvoyer une réponse JSON avec les erreurs de validation
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+
+        $id_user = $request->input('id_user');
+        $nom_user = $request->input('nom_user');
+        $prenom_user = $request->input('prenom_user');
+        $mdp_user = $request->input('mdp_user');
+        $type_user = $request->input('type_user');
+        $adress_user = $request->input('adress_user');
+        $adress_email = $request->input('adress_email');
+
+
+        try {
+            $insertion=DB::insert(
+                "INSERT INTO public.users(
+                    id_user,
+                    nom_user,
+                    prenom_user,
+                    mdp_user,
+                    type_user,
+                    adresse_user,
+                    adresse_mail)
+                VALUES (
+                    '".$id_user."',
+                    '".$nom_user."',
+                    '".$prenom_user."',
+                    '".$mdp_user."',
+                    '".$type_user."',
+                    '".$adress_user."',
+                    '".$adress_email."')
+                ");
+                return  response()->json(["status" => true,
+                                            "message"=> "Insertion réussit"], 200);
+        } catch (\Throwable $th) {
+            return  response()->json(["status" => false, "erreur" => $th,
+                                        "message"=> "Insertion non réussit"], 400);
+        }
+    }
+
+
 }
