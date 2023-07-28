@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class TestApi extends Controller
 {
@@ -57,7 +58,7 @@ class TestApi extends Controller
 
         $insertion=DB::insert("INSERT INTO public.users(
             id_user, nom_user, prenom_user, mdp_user, type_user, adresse_user, adresse_mail)
-            VALUES ('".$id_user."', '".$nom_user."', '".$prenom_user."', '".$mdp_user."', '".$type_user."', '".$adresse_user."', '".$adresse_mail."');");
+            VALUES (?, ?, ?, ?, ?, ?, ?);",[$id_user,$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail]);
 
             if ($insertion){
                 return response()->json(
@@ -70,5 +71,66 @@ class TestApi extends Controller
             }
 
             return response()->json(['error' => 'Echec'], 401);
+    }
+
+    public function modifierCompte($id_user,Request $request) {
+        $nom_user=$request->input('nom_user');
+        $prenom_user=$request->input('prenom_user');
+        $mdp_user=$request->input('mdp_user');
+        $type_user=$request->input('type_user');
+        $adresse_user=$request->input('adresse_user');
+        $adresse_mail=$request->input('adresse_mail');
+
+        $modification=DB::update("UPDATE public.users 
+        SET nom_user=?, prenom_user=?, mdp_user=?, type_user=?, adresse_user=?, adresse_mail=?
+        WHERE id_user = ?",
+        [$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail,$id_user]);
+
+        if ($modification){
+            return response()->json(
+                [
+                    'message' => 'Réussie',
+                    'status' => true,
+                    'erfgd' => $nom_user,
+                ], 
+                
+            200);
+        }
+
+        return response()->json(['error' => 'Echec'], 401);
+
+    }
+
+    public function suprimer($id) {
+        $verfie=DB::select
+            (
+                'select *
+                from users
+                where id_user = ? ', [$id]
+            );
+    
+        if (empty($verfie)) {
+    
+            return response()->json (
+                [
+                    'status'=>false,
+                    'message'=>"ID n'existe pas"
+                ], 400
+                );
+        } else {
+            $delete=DB::delete
+            (
+                'delete
+                from users
+                where id_user = ?', [$id]
+            );
+    
+            return response()->json (
+                [
+                    'status'=>true,
+                    'message'=>"Suppression réussie !"
+                ], 200
+                );
+        }
     }
 }

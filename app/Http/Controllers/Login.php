@@ -36,10 +36,10 @@ class Login extends Controller
 
         $messages = [
             'required' => ' Veuillez saisir le :attribute',
-            'max' => '{:attribute: Vérifier la longueur de :attribute}',
-            'min' => '{:attribute: Vérifier la taille :attribute}',
-            'email' => '{:attribute: Incorrect :attribute}',
-            'integer' => '{:attribute: Veuillez saisir en entier :attribute}',
+            'max'      => ' Vérifier la longueur de :attribute',
+            'min'      => ' Vérifier la taille :attribute',
+            'email'    => ' Incorrect :attribute',
+            'integer'  => ' Veuillez saisir en entier :attribute',
         ];
 
         $validator = Validator::make($request->all(), $rules,$messages);
@@ -60,7 +60,7 @@ class Login extends Controller
 
         $register=DB::insert("INSERT INTO public.users(
             id_user, nom_user, prenom_user, mdp_user, type_user, adresse_user, adresse_mail)
-            VALUES ('".$id_user."', '".$nom_user."', '".$prenom_user."', '".$mdp_user."', '".$type_user."', '".$adresse_user."', '".$adresse_mail."');");
+            VALUES (?,?,?,?,?,?,?);",[$id_user,$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail]);
             
 
         if ($register) {
@@ -86,11 +86,21 @@ class Login extends Controller
         // Validation des données entrantes
         $validator = Validator::make($request->all(), [
             'adresse_mail' => 'required|email',
-            'mdp_user' => 'required',
+            'mdp_user' => 'required|min:8',
         ]);
+
+        $message = [
+            'required' => ' Veuillez saisir le :attribute',
+            'email'    => ' Vérifier votre :attribute',
+            'min'      => ' Vérifier la longueur de votre :attribute',
+        ];
+
+        $validator = Validator::make($request->all(), $validator,$message);
     
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return response()->json(
+                $validator->errors(),
+            400);
         }
 
         $adresse_mail = $request->input('adresse_mail');
