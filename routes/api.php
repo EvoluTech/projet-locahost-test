@@ -16,11 +16,11 @@ use App\Http\Controllers\TestApi;
 */
 
 
-
-Route::post('/login', [TestApi::class, 'login']);
-Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
-Route::get('/getusers', [TestApi::class, 'afficheTest']);
-Route::middleware('verify.token')->group(function () {
+Route::middleware('cors')->group(function () {
+    
+    Route::post('/login', [TestApi::class, 'login']);
+    Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
+    Route::get('/getusers', [TestApi::class, 'afficheTest']);
     
 });
 
