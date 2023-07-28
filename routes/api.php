@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestApi;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,4 +16,11 @@ use App\Http\Controllers\TestApi;
 */
 
 
+
 Route::post('/login', [TestApi::class, 'login']);
+Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
+Route::get('/getusers', [TestApi::class, 'afficheTest']);
+Route::middleware('verify.token')->group(function () {
+    
+});
+
