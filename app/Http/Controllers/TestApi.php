@@ -284,6 +284,37 @@ class TestApi extends Controller
                     }
             }
     }
+    public function select()
+    {
+       $recherche = DB::select(
+        'SELECT *
+        FROM users'
+
+        );
+
+         if (empty($recherche))
+        {
+            // Gérer le cas où aucun utilisateur n'est trouvé pour l'ID spécifié
+            return response()->json
+            (
+                [
+                    "status" => false,
+                    'message' => 'Aucun bien trouvé '
+                ], 404
+            );
+        }
+
+        // Renvoyer la liste des utilisateurs sous forme de réponse JSON
+        return response()->json
+        (
+            [
+                "status" => true,
+                'data' => $recherche,
+                'message' => 'voici la liste des biens trouvés '
+
+            ], 200
+        );
+    }
 
 
 

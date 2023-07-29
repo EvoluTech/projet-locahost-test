@@ -18,6 +18,7 @@ Route::post('/login', [TestApi::class, 'login']);
 Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
 Route::delete('/delete/{id_user}', [TestApi::class, 'destroy']);
 Route::put('/update/{id_user}', [TestApi::class, 'update']);
+Route::get('/select', [TestApi::class, 'select']);
 
 Route::post('/creerBien', [Biens::class, 'creerBien']);
 Route::delete('/suprimer/{id_objet}', [Biens::class, 'suprimer']);
