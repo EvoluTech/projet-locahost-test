@@ -25,7 +25,6 @@ class Login extends Controller
     public function register(Request $request) {
         //Validation des données entrantes
         $rules = [
-            'id_user' => 'required|integer',
             'nom_user' => 'required|max:10',
             'prenom_user' => 'required',
             'mdp_user' => 'required|min:8',
@@ -50,7 +49,6 @@ class Login extends Controller
             400);
         }
 
-        $id_user = $request->input('id_user');
         $nom_user = strtoupper($request->input('nom_user'));
         $prenom_user = $request->input('prenom_user');
         $mdp_user = $request->input('mdp_user');
@@ -60,7 +58,8 @@ class Login extends Controller
 
         $register=DB::insert("INSERT INTO public.users(
             id_user, nom_user, prenom_user, mdp_user, type_user, adresse_user, adresse_mail)
-            VALUES (?,?,?,?,?,?,?);",[$id_user,$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail]);
+            VALUES (nextval('id_user'),?,?,?,?,?,?)
+            ",[$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail]);
             
 
         if ($register) {
@@ -84,10 +83,11 @@ class Login extends Controller
     public function login(Request $request)
     {
         // Validation des données entrantes
-        $validator = Validator::make($request->all(), [
+        $validator = 
+        [
             'adresse_mail' => 'required|email',
             'mdp_user' => 'required|min:8',
-        ]);
+        ];
 
         $message = [
             'required' => ' Veuillez saisir le :attribute',
@@ -108,7 +108,25 @@ class Login extends Controller
 
         $user = User::where('adresse_mail', $adresse_mail)->first();
 
-        if ($user) {
+        if (!$user) {
+            return response()->json(
+                [
+                    'error' => 'Adresse e-mail incorrecte',
+                    'status' => false
+                ],
+                401
+            );
+        }
+    
+        if ($mdp_user !== $user->mdp_user) {
+            return response()->json(
+                [
+                    'error' => 'Mot de passe incorrect',
+                    'status' => false
+                ],
+                401
+            );
+        }
             $token = $this->guard()->login($user);
             
             return response()->json(
@@ -119,14 +137,6 @@ class Login extends Controller
             ], 
             
         200);
-    }
-
-        return response()->json(
-            [
-                'error' => 'Accès non autorisé'
-            ], 
-            
-        401); 
         
     }
 
