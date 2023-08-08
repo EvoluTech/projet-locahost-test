@@ -25,7 +25,7 @@ Route::delete('/suprimer/{id_user}', [TestApi::class, 'suprimer']);
 Route::post('/insertionCategorie', [Categorie::class, 'insertionCategorie']);
 Route::put('/majCategorie/{id_categorie}', [Categorie::class, 'majCategorie']);
 Route::delete('/supprimerCategorie/{id_categorie}', [Categorie::class, 'supprimerCategorie']);
-Route::get('/listeCategorie/{id_categorie}', [Categorie::class, 'listeCategorie']);
+Route::get('/rechercheCategorie/{id_categorie}', [Categorie::class, 'rechercheCategorie']);
 
 Route::middleware('verify.token')->group(function() {
     
