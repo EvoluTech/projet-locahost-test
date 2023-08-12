@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 <<<<<<< HEAD
+<<<<<<< HEAD
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,8 @@ class VerifyToken
 }
 
 =======
+=======
+>>>>>>> origin/Oly
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,4 +93,7 @@ class VerifyToken
         });
     }
 }
+<<<<<<< HEAD
+>>>>>>> origin/Oly
+=======
 >>>>>>> origin/Oly

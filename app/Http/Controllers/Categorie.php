@@ -131,7 +131,7 @@ class Categorie extends Controller
         }
     }
 
-    public function listeCategorie($id) {
+    public function rechercheCategorie($id) {
         $recherche=DB::select
             (
                 'SELECT *
@@ -153,6 +153,31 @@ class Categorie extends Controller
                         'status'  => true,
                         'message' => "Réussie",
                         'data' => $recherche
+                    ], 200
+        );
+    }
+
+    public function listeCategorie() {
+        $liste=DB::select
+            (
+                'SELECT *
+                FROM categorie'
+            );
+
+        if (empty($liste)) {
+    
+            return response()->json (
+                    [
+                        'status'=> false,
+                        'message'=>"Erreur"
+                    ], 400
+            );
+        }
+            return response()->json (
+                    [
+                        'status'  => true,
+                        'message' => "Réussie",
+                        'data' => $liste
                     ], 200
         );
     }

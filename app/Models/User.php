@@ -26,8 +26,12 @@ class User extends Authenticatable implements JWTSubject
     ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
+=======
+    
+>>>>>>> origin/Oly
 =======
     
 >>>>>>> origin/Oly

@@ -20,13 +20,14 @@ Route::post('/login', [Login::class, 'login']);
 Route::post('/register', [Login::class, 'register']);
 
 Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
+Route::post('/uploadImage', [TestApi::class, 'uploadImage']);
 Route::put('/modifierCompte/{id_user}', [TestApi::class, 'modifierCompte']);
 Route::delete('/suprimer/{id_user}', [TestApi::class, 'suprimer']);
 
 Route::post('/insertionCategorie', [Categorie::class, 'insertionCategorie']);
 Route::put('/majCategorie/{id_categorie}', [Categorie::class, 'majCategorie']);
 Route::delete('/supprimerCategorie/{id_categorie}', [Categorie::class, 'supprimerCategorie']);
-Route::get('/listeCategorie/{id_categorie}', [Categorie::class, 'listeCategorie']);
+Route::get('/rechercheCategorie/{id_categorie}', [Categorie::class, 'rechercheCategorie']);
 
 Route::middleware('verify.token')->group(function() {
 

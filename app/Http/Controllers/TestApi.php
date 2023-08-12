@@ -33,6 +33,7 @@ class TestApi extends Controller
     {
         //request eto dia mandray an le post fa mbola tsy mverifier
 
+        //mandray an'ilay données(request)
         $nom_user = $request->input('nom_user');
         $mdp_user = $request->input('mdp_user');
 
@@ -436,10 +437,31 @@ public function BiensPostuler(Request $request)
                 ], 400
             );
         }
+    }
+
+    public function uploadImage(Request $request)
+{
+    if ($request->hasFile('photo_1')) {
+        $image = $request->file('photo_1');
+        $imageName = $image->getClientOriginalName(); // Récupère le nom d'origine du fichier
+        $imagePath = $image->storeAs('uploads', $imageName, 'public'); // Stocke l'image dans public/uploads
+
+        // // Enregistrement du chemin de l'image dans la base de données
+        // // Ici, nous utilisons DB::table() pour insérer les données
+        $imageData = [
+             'photos_1' => $imagePath,
+             // Ajoutez d'autres colonnes si nécessaire
+         ];
+         DB::table('bienspostuler')->insert($imageData);
+
+        return response()->json(['message' => 'OK']);
+    }
+
+    return response()->json(['error' => 'Aucune image téléchargée'], 400);
 }
 
 
 
 
+    }
 
-}
