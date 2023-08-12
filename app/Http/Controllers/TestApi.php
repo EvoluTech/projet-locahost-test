@@ -193,6 +193,7 @@ public function BiensPostuler(Request $request)
             'description_biens' => 'required',
             'ville' => 'required',
             'id_objet' => 'required',
+            'type_annee' => 'required',
 
         ], [
             'required' => 'Le champ :attribute est obligatoire.',
@@ -222,7 +223,7 @@ public function BiensPostuler(Request $request)
         $description_biens = $request->input('description_biens');
         $ville = $request->input('ville');
         $id_objet = $request->input('id_objet');
-
+        $type_annee = $request->input('type_annee');
         $result = DB::select("SELECT nextval('id_detail_bien_postuler') as next_value");
         $sequence_id_detail_bien = $result[0]->next_value;
 
@@ -236,6 +237,16 @@ public function BiensPostuler(Request $request)
         try {
             $insert = DB::insert($sqlInsert,$dataDetailsB);
 
+            $imagePaths = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $currentTimestamp = Carbon::now()->timestamp."".$i;
+                if ($request->hasFile("photos_$i")) {
+                    $image = $request->file("photos_$i");
+                    $imageName = $currentTimestamp.'_'.$image->getClientOriginalName();
+                    $imagePath = $image->storeAs('uploads', $imageName, 'public');
+                    $imagePaths["photos_$i"] = $imagePath;
+                }
+            }
 
             $insertion = DB::insert(
                 "INSERT INTO public.bienspostuler(
@@ -249,7 +260,12 @@ public function BiensPostuler(Request $request)
                     description_biens,
                     ville,
                     id_objet,
-                    id_detailsbienspostuler)
+                    id_detailsbienspostuler,
+                    type_annee,
+                    photos_1,
+                    photos_2,
+                    photos_3,
+                    photos_4)
                 VALUES (
                     nextval('id_bien_postuler'),
                     '$date_debut_postule', -- Utilisation de la variable
@@ -261,8 +277,14 @@ public function BiensPostuler(Request $request)
                     '$description_biens',  -- Utilisation de la variable
                     '$ville',              -- Utilisation de la variable
                     '$id_objet' ,           -- Utilisation de la variable
-                    '$sequence_id_detail_bien'-- Utilisation de la variable
-                );"
+                    '$sequence_id_detail_bien',-- Utilisation de la variable
+                    '$type_annee',
+                    :photos_1,
+                    :photos_2,
+                    :photos_3,
+                    :photos_4
+                );" 
+                ,$imagePaths
             );
 
             return response()->json(

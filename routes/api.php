@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestApi;
+use App\Http\Controllers\BiensPostuler;
 use App\Http\Controllers\Categorie;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Biens;
@@ -28,6 +29,8 @@ Route::post('/insertionCategorie', [Categorie::class, 'insertionCategorie']);
 Route::put('/majCategorie/{id_categorie}', [Categorie::class, 'majCategorie']);
 Route::delete('/supprimerCategorie/{id_categorie}', [Categorie::class, 'supprimerCategorie']);
 Route::get('/rechercheCategorie/{id_categorie}', [Categorie::class, 'rechercheCategorie']);
+
+Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
 
 Route::middleware('verify.token')->group(function() {
     

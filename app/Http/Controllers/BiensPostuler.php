@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Detailsbienspostuler;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 
 class BiensPostuler extends Controller
 {
@@ -16,116 +15,133 @@ class BiensPostuler extends Controller
         return Auth::guard('api');
     }
 
-  /*  public function create(Request $request)
-    {
-        // Validation des données entrantes pour Detailsbienspostuler
-        $detailsValidator = Validator::make($request->all(), [
-            // Règles de validation pour Detailsbienspostuler
-            'nombre_vue_detailsbienspostuler' => 'required',
-            'signalisation_detailsbienspostuler' => 'required',
-            'status_detailsbienspostuler' => 'required'
-         
-        ]);
-
-        if ($detailsValidator->fails()) {
-            return response()->json([
-                'error' => $detailsValidator->errors()->all()
-            ], 400);
-        }
-
-        // Insérer dans Detailsbienspostuler
-        $detailsId = DB::table('Detailsbienspostuler')->insertGetId([ 
-            // Champs à insérer pour Detailsbienspostuler
-        ]);
-
-        if (!$detailsId) {
-            return response()->json([
-                'error' => 'Échec de l\'insertion dans Detailsbienspostuler'
-            ], 500);
-        }
-
-        // Validation des données entrantes pour BiensPostuler
-        $bienValidator = Validator::make($request->all(), [
-            // Règles de validation pour BiensPostuler
-        ]);
-
-        if ($bienValidator->fails()) {
-            // Supprimer l'entrée précédente dans Detailsbienspostuler en cas d'erreur
-            DB::table('Detailsbienspostuler')->where('id_detailsbienspostuler', $detailsId)->delete();
-
-            return response()->json([
-                'error' => $bienValidator->errors()->all()
-            ], 400);
-        }
-
-        // Insérer dans BiensPostuler avec l'ID de Detailsbienspostuler
-        $bienPostulerId = DB::table('BiensPostuler')->insertGetId([
-            'id_detailsbienspostuler' => $detailsId,
-            // Champs à insérer pour BiensPostuler
-        ]);
-
-        if (!$bienPostulerId) {
-            // Supprimer les entrées précédentes en cas d'erreur
-            DB::table('Detailsbienspostuler')->where('id_detailsbienspostuler', $detailsId)->delete();
-
-            return response()->json([
-                'error' => 'Échec de l\'insertion dans BiensPostuler'
-            ], 500);
-        }
-
-        return response()->json([
-            'message' => 'Insertion réussie dans Detailsbienspostuler et BiensPostuler',
-            'status' => true
-        ], 200);
-}*/
-
-
-public function create(Request $request)
-{
-    // Validation des données et insertion dans Detailsbienspostuler
-    $detailsData = [
-        'nombre_vue_detailsbienspostuler' => 0,
-        'signalisation_detailsbienspostuler' => 0,
-        'status_detailsbienspostuler' => 0,
-    ];
-    $details = Detailsbienspostuler::create($detailsData);
-
-    // Utilisation de l'ID généré pour insérer dans Bienspostuler
-    $biensData = [
-        'id_bienspostuler' => 'valeur_id_bienspostuler',
-        'date_debut_postule' => '2023-07-16 00:00:00', // Mettez la date appropriée
-        'date_fin_postule' => '2023-07-20 00:00:00', // Mettez la date appropriée
-        'prix_biens' => 'valeur_prix_biens',
-        'prix_par_jour' => 'valeur_prix_par_jour',
-        'prix_total_payer' => 'valeur_prix_total_payer',
-        /*'photos_1' => 'chemin_photo_1',
-        'photos_2' => 'chemin_photo_2',
-        'photos_3' => 'chemin_photo_3',
-        'photos_4' => 'chemin_photo_4',*/
-        'etat_biens' => 'valeur_etat_biens',
-        'description_biens' => 'valeur_description_biens',
-        'id_detailsbienspostuler' => $details->id_detailsbienspostuler,
-        'id_objet' => 'valeur_id_objet',
-    ];
-
-    $imagePaths = [];
-    foreach(['photos_1','photos_2','photos_3','photos_4'] as $photoField){
-        if ($request->hasFile($photoField)) {
-            $image = $request->file($photoField);
-            $imagePath = $image->store('uploads', 'public');
-            $imagePaths[$photoField] = $imagePath;
-        }
+    function convStringTimestamp($dateString) {
+        $date = Carbon::createFromFormat('d/m/Y', $dateString);
+        return $date;
     }
 
-    $biensData = array_merge($biensData, $imagePaths);
-
-    $bienspostuler = BiensPostuler::create($biensData);
-
-    return response()->json([
-        'message' => 'Enregistrement réussi',
-        'details' => $details,
-        'bienspostuler' => $bienspostuler,
-    ], 200);
-}
+    public function createPostuler(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+    
+                'date_debut_postule' => 'required',
+                'date_fin_postule' => 'required',
+                'prix_biens' => 'required',
+                'prix_par_jour' => 'required',
+                'prix_total_payer' => 'required',
+                'etat_biens' => 'required',
+                'description_biens' => 'required',
+                'ville' => 'required',
+                'id_objet' => 'required',
+                'type_annee' => 'required',
+    
+            ], [
+                'required' => 'Le champ :attribute est obligatoire.',
+                'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+                'max' => 'Le champ :attribute ne doit pas dépasser :max caractères.',
+                'min' => 'Le champ :attribute doit contenir au moins :min caractères.',
+            ]);
+    
+            if ($validator->fails())
+            {
+                // Renvoyer une réponse JSON avec les erreurs de validation
+                return response()->json
+                (
+                    [
+                        'errors' => $validator->errors()
+                    ], 422
+                );
+            }
+    
+    
+            $date_debut_postule = $this->convStringTimestamp($request->input('date_debut_postule'));
+            $date_fin_postule = $this->convStringTimestamp($request->input('date_fin_postule'));
+            $prix_biens = $request->input('prix_biens');
+            $prix_par_jour = $request->input('prix_par_jour');
+            $prix_total_payer = $request->input('prix_total_payer');
+            $etat_biens = $request->input('etat_biens');
+            $description_biens = $request->input('description_biens');
+            $ville = $request->input('ville');
+            $id_objet = $request->input('id_objet');
+            $type_annee = $request->input('type_annee');
+            $result = DB::select("SELECT nextval('id_detail_bien_postuler') as next_value");
+            $sequence_id_detail_bien = $result[0]->next_value;
+    
+            $nombre_vue_detailsbienspostuler = 0;
+            $signalisation_detailsbienspostuler = 0;
+            $status_detailsbienspostuler = 0;
+    
+            $dataDetailsB=[$sequence_id_detail_bien,$nombre_vue_detailsbienspostuler,$signalisation_detailsbienspostuler,$status_detailsbienspostuler];
+            $sqlInsert="INSERT INTO public.detailsbienspostuler(id_detailsbienspostuler,nombre_vue_detailsbienspostuler,signalisation_detailsbienspostuler,status_detailsbienspostuler)
+            values (?,?,?,?)";
+            try {
+                $insert = DB::insert($sqlInsert,$dataDetailsB);
+    
+                $imagePaths = [];
+                for ($i = 1; $i <= 4; $i++) {
+                    $currentTimestamp = Carbon::now()->timestamp."".$i;
+                    if ($request->hasFile("photos_$i")) {
+                        $image = $request->file("photos_$i");
+                        $imageName = $currentTimestamp.'_'.$image->getClientOriginalName();
+                        $imagePath = $image->storeAs('uploads', $imageName, 'public');
+                        $imagePaths["photos_$i"] = $imagePath;
+                    }
+                }
+    
+                $insertion = DB::insert(
+                    "INSERT INTO public.bienspostuler(
+                        id_bienspostuler,
+                        date_debut_postule,
+                        date_fin_postule,
+                        prix_biens,
+                        prix_par_jour,
+                        prix_total_payer,
+                        etat_biens,
+                        description_biens,
+                        ville,
+                        id_objet,
+                        id_detailsbienspostuler,
+                        type_annee,
+                        photos_1,
+                        photos_2,
+                        photos_3,
+                        photos_4)
+                    VALUES (
+                        nextval('id_bien_postuler'),
+                        '$date_debut_postule', 
+                        '$date_fin_postule',   
+                        '$prix_biens',         
+                        '$prix_par_jour',      
+                        '$prix_total_payer',   
+                        '$etat_biens',         
+                        '$description_biens',  
+                        '$ville',              
+                        '$id_objet' ,           
+                        '$sequence_id_detail_bien',
+                        '$type_annee',
+                        :photos_1,
+                        :photos_2,
+                        :photos_3,
+                        :photos_4
+                    );" 
+                    ,$imagePaths
+                );
+    
+                return response()->json(
+                    [
+                        "status" => true,
+                        "message" => "Insertion réussie"
+                    ], 200
+                );
+            } catch (\Throwable $th) {
+                return response()->json(
+                    [
+                        "status" => false,
+                        "erreur" => $th,
+                        "message" => "Insertion non réussie"
+                    ], 400
+                );
+            }
+    }
 }
 
