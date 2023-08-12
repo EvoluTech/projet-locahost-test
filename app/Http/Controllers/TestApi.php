@@ -21,6 +21,7 @@ class TestApi extends Controller
     {
         //middleware : anelan'elan'ny controller sy route,eto zao token ny middleware
         //$this->middleware('auth:api', ['except' => ['login']]);
+        //middleware = polisy misava ticket
     }
 
     public function login(Request $request)
@@ -44,7 +45,13 @@ class TestApi extends Controller
             200);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json
+        (
+            [
+                'error' => 'Unauthorized'
+            ]
+            , 401
+        );
     }
 
     public function creerCompte(Request $request) {
@@ -133,4 +140,30 @@ class TestApi extends Controller
                 );
         }
     }
+
+    public function uploadImage(Request $request)
+{
+    if ($request->hasFile('photo_1')) {
+        $image = $request->file('photo_1');
+        $imageName = $image->getClientOriginalName(); // Récupère le nom d'origine du fichier
+        $imagePath = $image->storeAs('uploads', $imageName, 'public'); // Stocke l'image dans public/uploads
+
+        // // Enregistrement du chemin de l'image dans la base de données
+        // // Ici, nous utilisons DB::table() pour insérer les données
+        $imageData = [
+             'photos_1' => $imagePath,
+             // Ajoutez d'autres colonnes si nécessaire
+         ];
+         DB::table('bienspostuler')->insert($imageData);
+
+        return response()->json(['message' => 'OK']);
+    }
+
+    return response()->json(['error' => 'Aucune image téléchargée'], 400);
 }
+
+        
+         
+    
+    }
+
