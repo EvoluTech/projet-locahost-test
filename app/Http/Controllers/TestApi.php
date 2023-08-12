@@ -393,7 +393,6 @@ public function BiensPostuler(Request $request)
         try {
             $insert = DB::insert($sqlInsert,$dataDetailsB);
 
-
             $insertion = DB::insert(
                 "INSERT INTO public.bienspostuler(
                     id_bienspostuler,
