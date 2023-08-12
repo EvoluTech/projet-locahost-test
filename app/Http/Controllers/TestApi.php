@@ -291,5 +291,5 @@ public function BiensPostuler(Request $request)
         
          
     
-    }
+    
 
