@@ -22,7 +22,7 @@ class Biens extends Controller
     public function creerBien(Request $request)
     {
         $validator = Validator::make($request->all(), [
-                'id_objet' => 'required',
+
                 'nom_projet' => 'required',
                 'type_objet' => 'required',
                 'information_objet' => 'required',
@@ -65,7 +65,7 @@ class Biens extends Controller
                     description_objet)
 
                 VALUES (
-                    '".$id_objet."',
+                    nextval('id_bien'),
                     '".$nom_projet."',
                     '".$type_objet."',
                     '".$information_objet."',
