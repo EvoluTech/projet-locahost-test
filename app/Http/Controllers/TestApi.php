@@ -338,7 +338,7 @@ class TestApi extends Controller
 
 
 
-public function BiensPostuler(Request $request)
+    public function BiensPostuler(Request $request)
 {
     $validator = Validator::make($request->all(), [
 
@@ -394,6 +394,17 @@ public function BiensPostuler(Request $request)
         try {
             $insert = DB::insert($sqlInsert,$dataDetailsB);
 
+            $imagePaths = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $currentTimestamp = Carbon::now()->timestamp."".$i;
+                if ($request->hasFile("photos_$i")) {
+                    $image = $request->file("photos_$i");
+                    $imageName = $currentTimestamp.'_'.$image->getClientOriginalName();
+                    $imagePath = $image->storeAs('uploads', $imageName, 'public');
+                    $imagePaths["photos_$i"] = $imagePath;
+                }
+            }
+
             $insertion = DB::insert(
                 "INSERT INTO public.bienspostuler(
                     id_bienspostuler,
@@ -406,7 +417,11 @@ public function BiensPostuler(Request $request)
                     description_biens,
                     ville,
                     id_objet,
-                    id_detailsbienspostuler)
+                    id_detailsbienspostuler,
+                    photos_1,
+                    photos_2,
+                    photos_3,
+                    photos_4)
                 VALUES (
                     nextval('id_bien_postuler'),
                     '$date_debut_postule', -- Utilisation de la variable
@@ -418,8 +433,13 @@ public function BiensPostuler(Request $request)
                     '$description_biens',  -- Utilisation de la variable
                     '$ville',              -- Utilisation de la variable
                     '$id_objet' ,           -- Utilisation de la variable
-                    '$sequence_id_detail_bien'-- Utilisation de la variable
-                );"
+                    '$sequence_id_detail_bien',-- Utilisation de la variable
+                    :photos_1,
+                    :photos_2,
+                    :photos_3,
+                    :photos_4
+                )"
+                ,$imagePaths
             );
 
             return response()->json(
@@ -437,30 +457,7 @@ public function BiensPostuler(Request $request)
                 ], 400
             );
         }
-    }
-
-    public function uploadImage(Request $request)
-{
-    if ($request->hasFile('photo_1')) {
-        $image = $request->file('photo_1');
-        $imageName = $image->getClientOriginalName(); // Récupère le nom d'origine du fichier
-        $imagePath = $image->storeAs('uploads', $imageName, 'public'); // Stocke l'image dans public/uploads
-
-        // // Enregistrement du chemin de l'image dans la base de données
-        // // Ici, nous utilisons DB::table() pour insérer les données
-        $imageData = [
-             'photos_1' => $imagePath,
-             // Ajoutez d'autres colonnes si nécessaire
-         ];
-         DB::table('bienspostuler')->insert($imageData);
-
-        return response()->json(['message' => 'OK']);
-    }
-
-    return response()->json(['error' => 'Aucune image téléchargée'], 400);
 }
-
-
 
 
     }
