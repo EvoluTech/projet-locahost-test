@@ -60,14 +60,14 @@ class TestApi extends Controller
         );
     }
 
-    protected function respondWithToken($token)
+   /* protected function respondWithToken($token)
     {
         return response()->json([
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => $this->guard()->factory()->getTTL() * 60
         ]);
-    }
+    }*/
 
 
 
@@ -441,16 +441,16 @@ class TestApi extends Controller
                     photos_4)
                 VALUES (
                     nextval('id_bien_postuler'),
-                    '$date_debut_postule', -- Utilisation de la variable
-                    '$date_fin_postule',   -- Utilisation de la variable
-                    '$prix_biens',         -- Utilisation de la variable
-                    '$prix_par_jour',      -- Utilisation de la variable
-                    '$prix_total_payer',   -- Utilisation de la variable
-                    '$etat_biens',         -- Utilisation de la variable
-                    '$description_biens',  -- Utilisation de la variable
-                    '$ville',              -- Utilisation de la variable
-                    '$id_objet' ,           -- Utilisation de la variable
-                    '$sequence_id_detail_bien',-- Utilisation de la variable
+                    '$date_debut_postule', 
+                    '$date_fin_postule',   
+                    '$prix_biens',         
+                    '$prix_par_jour',      
+                    '$prix_total_payer',   
+                    '$etat_biens',         
+                    '$description_biens',  
+                    '$ville',              
+                    '$id_objet' ,           
+                    '$sequence_id_detail_bien',
                     '$type_annee',
                     :photos_1,
                     :photos_2,
@@ -479,8 +479,88 @@ class TestApi extends Controller
         }
 }
 
+public function search($id_user,$id_objet)
+    {
+       $search = DB::select(
+        'SELECT u.pdp as sarytapaka, u.nom_user as nom,
+                bp.photos_1 as sary1, bp.photos_2 as sary2, bp.photos_3 as sary3, bp.adresse_bien as descritionlieu,
+                b.type_objet as typebien,
+                bp.description_biens as optione, bp.prix_biens as prisis, bp.type_annee as mois, bp.pub_bien as détail
+        FROM users u, bienspostuler bp, biens b,postuler ps
+        WHERE u.id_user=ps.id_user and ps.id_bienspostuler=bp.id_bienspostuler and u.id_user=? and b.id_objet=?',[$id_user,$id_objet]);
 
+         if (empty($search))
+        {
+            // Gérer le cas où aucun utilisateur n'est trouvé pour l'ID spécifié
+            return response()->json
+            (
+                [
+                    "status" => false,
+                    'message' => 'Aucun bien trouvé '
+                ], 404
+            );
+        }
 
+        // Renvoyer la liste des utilisateurs sous forme de réponse JSON
+        return response()->json
+        (
+            [
+                "status" => true,
+                'data' => $search,
+                'message' => 'voici la liste des biens trouvés '
+
+            ], 200
+        );
+    }
+
+public function searchpub($id_user)
+    {
+
+    $publications = DB::select(
+        'SELECT u.pdp as sarytapaka, u.nom_user as nom,
+                bp.photos_1 as sary1, bp.photos_2 as sary2, bp.photos_3 as sary3, bp.adresse_bien as descritionlieu,
+                b.type_objet as typebien,
+                bp.description_biens as optione, bp.prix_biens as prisis, bp.type_annee as mois, bp.pub_bien as détail
+        FROM users u,postuler ps, bienspostuler bp, biens b
+        WHERE u.id_user=ps.id_user and ps.id_bienspostuler=bp.id_bienspostuler and u.id_user=?;',[$id_user]);
+
+    if (empty($publications)) {
+        return response()->json([
+            "status" => false,
+            'message' => 'Aucune publication trouvée'
+        ], 404);
+    }
+
+    return response()->json([
+        "status" => true,
+        'data' => $publications,
+        'message' => 'Voici la liste des publications de l\'utilisateur'
+    ], 200);
+}
+
+public function listeBiens($id_objet)
+    {
+
+    $publications = DB::select(
+        'SELECT bp.photos_1 as sary1, bp.photos_2 as sary2, bp.photos_3 as sary3, bp.adresse_bien as descritionlieu,
+                b.type_objet as typebien,
+                bp.description_biens as optione, bp.prix_biens as prisis, bp.pub_bien as détail
+        FROM bienspostuler bp, biens b
+        WHERE b.type_objet=b.type_objet and b.id_objet=?;',[$id_objet]);
+
+    if (empty($publications)) {
+        return response()->json([
+            "status" => false,
+            'message' => 'Aucune publication trouvée'
+        ], 404);
+    }
+
+    return response()->json([
+        "status" => true,
+        'data' => $publications,
+        'message' => 'Voici la liste des biens'
+    ], 200);
+}
 
 
 }

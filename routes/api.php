@@ -26,6 +26,7 @@ Route::put('/modifierCompte/{id_user}', [TestApi::class, 'modifierCompte']);
 Route::delete('/suprimer/{id_user}', [TestApi::class, 'suprimer']);
 Route::get('/search/{id_user}/{id_objet}', [TestApi::class, 'search']);
 Route::get('/searchpub/{id_user}', [TestApi::class, 'searchpub']);
+Route::get('/listeBiens/{id_objet}', [TestApi::class, 'listeBiens']);
 
 Route::post('/insertionCategorie', [Categorie::class, 'insertionCategorie']);
 Route::put('/majCategorie/{id_categorie}', [Categorie::class, 'majCategorie']);
@@ -37,6 +38,8 @@ Route::middleware('verify.token')->group(function() { });
 
 
 Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
+Route::get('/detailsPostuler/{id_user}/{id_objet}', [BiensPostuler::class, 'detailsPostuler']);
+Route::get('/historyPostuler/{id_user}', [BiensPostuler::class, 'historyPostuler']);
 
 Route::middleware('verify.token')->group(function() {
 

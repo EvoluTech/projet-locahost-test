@@ -169,5 +169,64 @@ class BiensPostuler extends Controller
                 );
             }
     }
+
+    public function detailsPostuler($id_user,$id_objet)
+    {
+       $search = DB::select(
+        'SELECT u.pdp as sarytapaka, u.nom_user as nom,
+                bp.photos_1 as sary1, bp.photos_2 as sary2, bp.photos_3 as sary3, bp.adresse_bien as descritionlieu,
+                b.type_objet as typebien,
+                bp.description_biens as optione, bp.prix_biens as prisis, bp.type_annee as mois, bp.pub_bien as détail
+        FROM users u, bienspostuler bp, biens b,postuler ps
+        WHERE u.id_user=ps.id_user and ps.id_bienspostuler=bp.id_bienspostuler and u.id_user=? and b.id_objet=?',[$id_user,$id_objet]);
+
+         if (empty($search))
+        {
+            // Gérer le cas où aucun utilisateur n'est trouvé pour l'ID spécifié
+            return response()->json
+            (
+                [
+                    "status" => false,
+                    'message' => 'Aucun bien trouvé '
+                ], 404
+            );
+        }
+
+        // Renvoyer la liste des utilisateurs sous forme de réponse JSON
+        return response()->json
+        (
+            [
+                "status" => true,
+                'data' => $search,
+                'message' => 'voici la liste des biens trouvés '
+
+            ], 200
+        );
+    }
+
+public function historyPostuler($id_user)
+    {
+
+    $publications = DB::select(
+        'SELECT u.pdp as sarytapaka, u.nom_user as nom,
+                bp.photos_1 as sary1, bp.photos_2 as sary2, bp.photos_3 as sary3, bp.adresse_bien as descritionlieu,
+                bp.description_biens as optione, bp.prix_biens as prisis, bp.type_annee as mois, bp.pub_bien as détail
+        FROM users u,postuler ps, bienspostuler bp
+        WHERE u.id_user=ps.id_user and ps.id_bienspostuler=bp.id_bienspostuler and u.id_user=?;',[$id_user]);
+
+    if (empty($publications)) {
+        return response()->json([
+            "status" => false,
+            'message' => 'Aucune publication trouvée'
+        ], 404);
+    }
+
+    return response()->json([
+        "status" => true,
+        'data' => $publications,
+        'message' => 'Voici la liste des publications de l\'utilisateur'
+    ], 200);
+}
+
 }
 
