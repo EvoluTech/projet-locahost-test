@@ -23,7 +23,7 @@ class BiensPostuler extends Controller
     public function createPostuler(Request $request)
     {
         $validator = Validator::make($request->all(), [
-    
+
                 'date_debut_postule' => 'required',
                 'date_fin_postule' => 'required',
                 'prix_biens' => 'required',
@@ -34,14 +34,16 @@ class BiensPostuler extends Controller
                 'ville' => 'required',
                 'id_objet' => 'required',
                 'type_annee' => 'required',
-    
+                'adresse_bien' => 'required',
+                'pub_bien' => 'required',
+
             ], [
                 'required' => 'Le champ :attribute est obligatoire.',
                 'string' => 'Le champ :attribute doit être une chaîne de caractères.',
                 'max' => 'Le champ :attribute ne doit pas dépasser :max caractères.',
                 'min' => 'Le champ :attribute doit contenir au moins :min caractères.',
             ]);
-    
+
             if ($validator->fails())
             {
                 // Renvoyer une réponse JSON avec les erreurs de validation
@@ -52,10 +54,13 @@ class BiensPostuler extends Controller
                     ], 422
                 );
             }
-    
-    
+
+
             $date_debut_postule = $this->convStringTimestamp($request->input('date_debut_postule'));
             $date_fin_postule = $this->convStringTimestamp($request->input('date_fin_postule'));
+            $date_postuler = $this->convStringTimestamp($request->input('date_postuler'));
+
+
             $prix_biens = $request->input('prix_biens');
             $prix_par_jour = $request->input('prix_par_jour');
             $prix_total_payer = $request->input('prix_total_payer');
@@ -64,19 +69,33 @@ class BiensPostuler extends Controller
             $ville = $request->input('ville');
             $id_objet = $request->input('id_objet');
             $type_annee = $request->input('type_annee');
+            $adresse_bien = $request->input('adresse_bien');
+            $pub_bien = $request->input('pub_bien');
+            $id_user = $request->input('id_user');
+
             $result = DB::select("SELECT nextval('id_detail_bien_postuler') as next_value");
             $sequence_id_detail_bien = $result[0]->next_value;
-    
+
+            $res1 = DB::select("SELECT nextval('id_bien_postuler') as next_value");
+            $sequennce_id_bien_postuler = $res1[0]->next_value;
+
+
             $nombre_vue_detailsbienspostuler = 0;
             $signalisation_detailsbienspostuler = 0;
             $status_detailsbienspostuler = 0;
-    
+
             $dataDetailsB=[$sequence_id_detail_bien,$nombre_vue_detailsbienspostuler,$signalisation_detailsbienspostuler,$status_detailsbienspostuler];
             $sqlInsert="INSERT INTO public.detailsbienspostuler(id_detailsbienspostuler,nombre_vue_detailsbienspostuler,signalisation_detailsbienspostuler,status_detailsbienspostuler)
             values (?,?,?,?)";
+
+            $dataPostuler=[$id_user, $sequennce_id_bien_postuler, $date_postuler];
+            $sqlInsert1="INSERT INTO public.postuler(id_user, id_bienspostuler, date_postuler)
+            values(?,?,?)";
+
+
             try {
                 $insert = DB::insert($sqlInsert,$dataDetailsB);
-    
+
                 $imagePaths = [];
                 for ($i = 1; $i <= 4; $i++) {
                     $currentTimestamp = Carbon::now()->timestamp."".$i;
@@ -87,7 +106,7 @@ class BiensPostuler extends Controller
                         $imagePaths["photos_$i"] = $imagePath;
                     }
                 }
-    
+
                 $insertion = DB::insert(
                     "INSERT INTO public.bienspostuler(
                         id_bienspostuler,
@@ -102,31 +121,38 @@ class BiensPostuler extends Controller
                         id_objet,
                         id_detailsbienspostuler,
                         type_annee,
+                        adresse_bien,
+                        pub_bien,
                         photos_1,
                         photos_2,
                         photos_3,
                         photos_4)
                     VALUES (
-                        nextval('id_bien_postuler'),
-                        '$date_debut_postule', 
-                        '$date_fin_postule',   
-                        '$prix_biens',         
-                        '$prix_par_jour',      
-                        '$prix_total_payer',   
-                        '$etat_biens',         
-                        '$description_biens',  
-                        '$ville',              
-                        '$id_objet' ,           
+                        '$sequennce_id_bien_postuler',
+                        '$date_debut_postule',
+                        '$date_fin_postule',
+                        '$prix_biens',
+                        '$prix_par_jour',
+                        '$prix_total_payer',
+                        '$etat_biens',
+                        '$description_biens',
+                        '$ville',
+                        '$id_objet' ,
                         '$sequence_id_detail_bien',
                         '$type_annee',
+                        '$adresse_bien',
+                        '$pub_bien',
                         :photos_1,
                         :photos_2,
                         :photos_3,
                         :photos_4
-                    );" 
+                    );"
                     ,$imagePaths
                 );
-    
+
+                $inserta = DB::insert($sqlInsert1,$dataPostuler);
+
+
                 return response()->json(
                     [
                         "status" => true,
