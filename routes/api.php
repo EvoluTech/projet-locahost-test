@@ -24,6 +24,8 @@ Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
 Route::post('/uploadImage', [TestApi::class, 'uploadImage']);
 Route::put('/modifierCompte/{id_user}', [TestApi::class, 'modifierCompte']);
 Route::delete('/suprimer/{id_user}', [TestApi::class, 'suprimer']);
+Route::get('/search/{id_user}/{id_objet}', [TestApi::class, 'search']);
+Route::get('/searchpub/{id_user}', [TestApi::class, 'searchpub']);
 
 Route::post('/insertionCategorie', [Categorie::class, 'insertionCategorie']);
 Route::put('/majCategorie/{id_categorie}', [Categorie::class, 'majCategorie']);

@@ -56,10 +56,12 @@ class Login extends Controller
         $adresse_user = $request->input('adresse_user');
         $adresse_mail = $request->input('adresse_mail');
 
+        $pdp = 'uploads/default.jpg';
+
         $register=DB::insert("INSERT INTO public.users(
-            id_user, nom_user, prenom_user, mdp_user, type_user, adresse_user, adresse_mail)
-            VALUES (nextval('id_user'),?,?,?,?,?,?)
-            ",[$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail]);
+            id_user, nom_user, prenom_user, mdp_user, type_user, adresse_user, adresse_mail,pdp)
+            VALUES (nextval('id_user'),?,?,?,?,?,?,?)
+            ",[$nom_user,$prenom_user,$mdp_user,$type_user,$adresse_user,$adresse_mail,$pdp]);
             
 
         if ($register) {

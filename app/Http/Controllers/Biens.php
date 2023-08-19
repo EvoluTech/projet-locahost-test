@@ -46,7 +46,7 @@ class Biens extends Controller
             }
 
 
-        $id_objet = $request->input('id_objet');
+        //$id_objet = $request->input('id_objet');
         $nom_projet = $request->input('nom_projet');
         $type_objet = $request->input('type_objet');
         $information_objet = $request->input('information_objet');
@@ -244,7 +244,7 @@ class Biens extends Controller
             [
                 "status" => true,
                 'data' => $recherche,
-                'message' => 'voici la liste des biens trouvés '
+                'message' => 'voici les informations sur les biens'
 
             ], 200
         );
