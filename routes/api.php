@@ -17,6 +17,7 @@ use App\Http\Controllers\Login;
 |
 */
 // Route::post('/login', [TestApi::class, 'login']);
+//Oly
 Route::post('/login', [Login::class, 'login']);
 Route::post('/register', [Login::class, 'register']);
 
@@ -33,28 +34,24 @@ Route::put('/majCategorie/{id_categorie}', [Categorie::class, 'majCategorie']);
 Route::delete('/supprimerCategorie/{id_categorie}', [Categorie::class, 'supprimerCategorie']);
 Route::get('/rechercheCategorie/{id_categorie}', [Categorie::class, 'rechercheCategorie']);
 
-Route::middleware('verify.token')->group(function() { });
-
-
-
-Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
-Route::get('/detailsPostuler/{id_user}/{id_objet}', [BiensPostuler::class, 'detailsPostuler']);
-Route::get('/historyPostuler/{id_user}', [BiensPostuler::class, 'historyPostuler']);
-
 Route::middleware('verify.token')->group(function() {
 
 });
 
 
-Route::post('/login', [TestApi::class, 'login']);
-Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
+Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
+Route::get('/detailsPostuler/{id_user}/{id_objet}', [BiensPostuler::class, 'detailsPostuler']);
+Route::get('/historyPostuler/{id_user}', [BiensPostuler::class, 'historyPostuler']);
+Route::post('/reagir', [BiensPostuler::class, 'reagir']);
+
+//Dina
 Route::delete('/delete/{id_user}', [TestApi::class, 'destroy']);
 Route::put('/update/{id_user}', [TestApi::class, 'update']);
 Route::get('/select', [TestApi::class, 'select']);
 Route::get('/getNextSequenceValue',[TestApi::class, 'getNextSequenceValue']);
 Route::post('/BiensPostuler', [TestApi::class, 'BiensPostuler']);
 Route::post('/postuler', [TestApi::class, 'postuler']);
-Route::post('/reagir', [TestApi::class, 'reagir']);
+//Route::post('/reagir', [TestApi::class, 'reagir']);
 
 
 Route::post('/creerBien', [Biens::class, 'creerBien']);
@@ -64,15 +61,6 @@ Route::get('recherche/{id_objet}',  [Biens::class, 'recherche']);
 
 
 
-Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
-Route::post('/reagir', [BiensPostuler::class, 'reagir']);
 
 
-Route::middleware('verify.token')->group(function(){
-
-
-
-    Route::post('/testProtectedRoute', [TestApi::class, 'testProtectedRoute']);
-
-});
 
