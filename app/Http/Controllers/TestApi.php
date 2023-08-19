@@ -328,14 +328,13 @@ class TestApi extends Controller
 
 
     public function getNextSequenceValue()
-{
-    // Exécutez la requête pour récupérer la prochaine valeur de la séquence
-    $result = DB::select("SELECT nextval('id_detail_bien_postuler') as next_value");
+    {
+        // Exécutez la requête pour récupérer la prochaine valeur de la séquence
+        $result = DB::select("SELECT nextval('id_detail_bien_postuler') as next_value");
 
-    // Renvoyez la valeur générée en tant que réponse JSON
-    return response()->json(['next_value' => $result[0]->next_value], 200);
-}
-
+        // Renvoyez la valeur générée en tant que réponse JSON
+        return response()->json(['next_value' => $result[0]->next_value], 200);
+    }
 
 
     public function BiensPostuler(Request $request)
@@ -351,6 +350,7 @@ class TestApi extends Controller
             'description_biens' => 'required',
             'ville' => 'required',
             'id_objet' => 'required',
+            'type_annee' => 'required',
 
         ], [
             'required' => 'Le champ :attribute est obligatoire.',
@@ -373,6 +373,9 @@ class TestApi extends Controller
 
         $date_debut_postule = $this->convStringTimestamp($request->input('date_debut_postule'));
         $date_fin_postule = $this->convStringTimestamp($request->input('date_fin_postule'));
+        $date_postuler = $this->convStringTimestamp($request->input('date_postuler'));
+
+
         $prix_biens = $request->input('prix_biens');
         $prix_par_jour = $request->input('prix_par_jour');
         $prix_total_payer = $request->input('prix_total_payer');
@@ -380,9 +383,17 @@ class TestApi extends Controller
         $description_biens = $request->input('description_biens');
         $ville = $request->input('ville');
         $id_objet = $request->input('id_objet');
+        $type_annee = $request->input('type_annee');
+        $id_user = $request->input('id_user');
 
         $result = DB::select("SELECT nextval('id_detail_bien_postuler') as next_value");
         $sequence_id_detail_bien = $result[0]->next_value;
+
+
+
+        $res1 = DB::select("SELECT nextval('id_bien_postuler') as next_value");
+        $sequennce_id_bien_postuler = $res1[0]->next_value;
+
 
         $nombre_vue_detailsbienspostuler = 0;
         $signalisation_detailsbienspostuler = 0;
@@ -391,6 +402,11 @@ class TestApi extends Controller
         $dataDetailsB=[$sequence_id_detail_bien,$nombre_vue_detailsbienspostuler,$signalisation_detailsbienspostuler,$status_detailsbienspostuler];
         $sqlInsert="INSERT INTO public.detailsbienspostuler(id_detailsbienspostuler,nombre_vue_detailsbienspostuler,signalisation_detailsbienspostuler,status_detailsbienspostuler)
         values (?,?,?,?)";
+
+        $dataPostuler=[$id_user, $sequennce_id_bien_postuler, $date_postuler];
+        $sqlInsert1="INSERT INTO public.postuler(id_user, id_bienspostuler, date_postuler)
+        values(?,?,?)";
+
         try {
             $insert = DB::insert($sqlInsert,$dataDetailsB);
 
@@ -418,12 +434,13 @@ class TestApi extends Controller
                     ville,
                     id_objet,
                     id_detailsbienspostuler,
+                    type_annee,
                     photos_1,
                     photos_2,
                     photos_3,
                     photos_4)
                 VALUES (
-                    nextval('id_bien_postuler'),
+                    '$sequennce_id_bien_postuler',
                     '$date_debut_postule', -- Utilisation de la variable
                     '$date_fin_postule',   -- Utilisation de la variable
                     '$prix_biens',         -- Utilisation de la variable
@@ -434,13 +451,16 @@ class TestApi extends Controller
                     '$ville',              -- Utilisation de la variable
                     '$id_objet' ,           -- Utilisation de la variable
                     '$sequence_id_detail_bien',-- Utilisation de la variable
+                    '$type_annee',
                     :photos_1,
                     :photos_2,
                     :photos_3,
                     :photos_4
-                )"
+                );"
                 ,$imagePaths
             );
+
+            $inserta = DB::insert($sqlInsert1,$dataPostuler);
 
             return response()->json(
                 [
@@ -460,5 +480,11 @@ class TestApi extends Controller
 }
 
 
-    }
+
+
+}
+
+
+
+
 

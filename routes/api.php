@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestApi;
 use App\Http\Controllers\Biens;
+use App\Http\Controllers\BiensPostuler;
 use App\Http\Controllers\Categorie;
 use App\Http\Controllers\Login;
 /*
@@ -29,6 +30,11 @@ Route::middleware('verify.token')->group(function() { });
 
 
 
+Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
+
+Route::middleware('verify.token')->group(function() {
+
+});
 
 
 Route::post('/login', [TestApi::class, 'login']);
@@ -38,12 +44,18 @@ Route::put('/update/{id_user}', [TestApi::class, 'update']);
 Route::get('/select', [TestApi::class, 'select']);
 Route::get('/getNextSequenceValue',[TestApi::class, 'getNextSequenceValue']);
 Route::post('/BiensPostuler', [TestApi::class, 'BiensPostuler']);
+Route::post('/postuler', [TestApi::class, 'postuler']);
 
 
 Route::post('/creerBien', [Biens::class, 'creerBien']);
 Route::delete('/suprimer/{id_objet}', [Biens::class, 'suprimer']);
 Route::put('/maj/{id_objet}', [Biens::class, 'maj']);
 Route::get('recherche/{id_objet}',  [Biens::class, 'recherche']);
+
+
+
+Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
+
 
 Route::middleware('verify.token')->group(function(){
 
