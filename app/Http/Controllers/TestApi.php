@@ -480,6 +480,77 @@ class TestApi extends Controller
 }
 
 
+public function reagir(Request $request) {
+    $validator = Validator::make($request->all(), [
+            'id_user'=> 'required|integer',
+            'id_bienspostuler' => 'required',
+            ], [
+            'required' => 'Le champ :attribute est obligatoire.',
+            'integer' => 'Le champ :attribute doit être un entier naturel.',
+            ]);
+
+        if ($validator->fails())
+        {
+            // Renvoyer une réponse JSON avec les erreurs de validation
+            return response()->json
+            (
+                [
+                    'errors' => $validator->errors()
+                ], 422
+            );
+        }
+
+
+    $id_user = $request->input('id_user');
+    $id_bienspostuler = $request->input('id_bienspostuler');
+    $date_reaction = Carbon::now()->toDateTimeString();
+    $varSelec='select * from reagir where id_bienspostuler=? and id_user=?';
+    try
+    {
+        $reqSelect=DB::select($varSelec, [$id_bienspostuler,$id_user]);
+        if (!$reqSelect) {
+            $insertion=DB::insert(
+                "INSERT INTO public.reagir(
+                    id_user,
+                    id_bienspostuler,
+                    date_reaction)
+                VALUES (
+                    '".$id_user."',
+                    '".$id_bienspostuler."',
+                    '".$date_reaction."'
+                )");
+
+                return  response()->json
+                (
+                    [
+                        "status" => true,
+                        "message"=> "Like"
+                    ], 200
+                );
+        }
+        else{
+            $delete=DB::delete('delete from reagir where id_bienspostuler=? and id_user=?', [$id_bienspostuler,$id_user]);
+            return  response()->json
+            (
+                [
+                    "status" => true,
+                    "message"=> "Tsy like"
+                ], 200
+            );
+        }
+
+    } catch (\Throwable $th)
+    {
+        return  response()->json
+        (
+            [
+                "status" => false,
+                "erreur" => $th,
+                "message"=> "Insertion non réussit"
+            ], 400
+        );
+    }
+}
 
 
 }

@@ -45,6 +45,7 @@ Route::get('/select', [TestApi::class, 'select']);
 Route::get('/getNextSequenceValue',[TestApi::class, 'getNextSequenceValue']);
 Route::post('/BiensPostuler', [TestApi::class, 'BiensPostuler']);
 Route::post('/postuler', [TestApi::class, 'postuler']);
+Route::post('/reagir', [TestApi::class, 'reagir']);
 
 
 Route::post('/creerBien', [Biens::class, 'creerBien']);
@@ -55,6 +56,7 @@ Route::get('recherche/{id_objet}',  [Biens::class, 'recherche']);
 
 
 Route::post('/createPostuler', [BiensPostuler::class, 'createPostuler']);
+Route::post('/reagir', [BiensPostuler::class, 'reagir']);
 
 
 Route::middleware('verify.token')->group(function(){
