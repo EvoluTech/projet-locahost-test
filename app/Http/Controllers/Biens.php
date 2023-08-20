@@ -17,7 +17,13 @@ class Biens extends Controller
         return Auth::guard('api');
     }
 
-
+    public function listBien(){
+        $data=DB::select("SELECT id_objet,type_objet FROM public.biens");
+        return response()->json([
+            'status'=>true,
+            'data'=>$data
+        ], 200);
+    }
 
     public function creerBien(Request $request)
     {
@@ -182,12 +188,12 @@ class Biens extends Controller
                 try
                 {
                     $update = DB::update(
-                        'UPDATE biens
+                        "UPDATE biens
                         SET nom_projet =?,
                             type_objet =?,
                             information_objet =?,
                             description_objet =?
-                        WHERE id_objet = ? ',
+                        WHERE id_objet = ? ",
                             [
                                 $nom_projet,
                                 $type_objet,

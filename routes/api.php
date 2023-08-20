@@ -39,6 +39,7 @@ Route::post('/creerBien', [Biens::class, 'creerBien']);
 Route::delete('/suprimer/{id_objet}', [Biens::class, 'suprimer']);
 Route::put('/maj/{id_objet}', [Biens::class, 'maj']);
 Route::get('recherche/{id_objet}',  [Biens::class, 'recherche']);
+Route::get('listBien',  [Biens::class, 'listBien']);
 
 
 

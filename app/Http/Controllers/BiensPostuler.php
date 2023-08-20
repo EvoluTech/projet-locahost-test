@@ -33,7 +33,7 @@ class BiensPostuler extends Controller
             INNER JOIN
                 reagir rg ON bp.id_bienspostuler = rg.id_bienspostuler
             GROUP BY
-                bp.id_bienspostuler,b.id_objet,, b.type_objet, bp.type_annee, bp.prix_biens, bp.ville, bp.photos_1
+                bp.id_bienspostuler,b.id_objet, b.type_objet, bp.type_annee, bp.prix_biens, bp.ville, bp.photos_1
         ");
         $reponse=[
             'status'=>true,
