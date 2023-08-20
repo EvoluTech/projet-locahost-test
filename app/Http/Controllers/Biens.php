@@ -45,7 +45,6 @@ class Biens extends Controller
                 );
             }
 
-
         $id_objet = $request->input('id_objet');
         $nom_projet = $request->input('nom_projet');
         $type_objet = $request->input('type_objet');

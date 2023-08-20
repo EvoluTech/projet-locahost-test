@@ -37,7 +37,7 @@ Route::middleware('verify.token')->group(function() {
 });
 
 
-Route::post('/login', [TestApi::class, 'login']);
+// Route::post('/login', [TestApi::class, 'login']);
 Route::post('/creerCompte', [TestApi::class, 'creerCompte']);
 Route::delete('/delete/{id_user}', [TestApi::class, 'destroy']);
 Route::put('/update/{id_user}', [TestApi::class, 'update']);

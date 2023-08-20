@@ -23,18 +23,9 @@ class User extends Authenticatable implements JWTSubject
         'mdp_user',
         'type_user',
         'adresse_user',
+        'adresse_mail',
     ];
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-
-=======
-    
->>>>>>> origin/Oly
-=======
-    
->>>>>>> origin/Oly
     protected $hidden = [
         'mdp_user',
     ];
