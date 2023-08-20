@@ -133,6 +133,7 @@ class Login extends Controller
             [
                 'token' => $token,
                 'message' => 'Bienvenue',
+                'info'=>$user,
                 'status' => true
             ], 
             

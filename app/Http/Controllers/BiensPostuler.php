@@ -15,6 +15,116 @@ class BiensPostuler extends Controller
         return Auth::guard('api');
     }
 
+    public function getBienPostulerData()
+    {
+        $data = DB::select("SELECT
+                COUNT(rg.id_user) AS vue,
+                bp.id_bienspostuler,
+                b.id_objet,
+                b.type_objet AS bien,
+                bp.type_annee AS type_annee,
+                bp.prix_biens AS prix,
+                bp.ville AS ville,
+                bp.photos_1 AS image
+            FROM
+                bienspostuler bp
+            INNER JOIN
+                biens b ON b.id_objet = bp.id_objet
+            INNER JOIN
+                reagir rg ON bp.id_bienspostuler = rg.id_bienspostuler
+            GROUP BY
+                bp.id_bienspostuler,b.id_objet,, b.type_objet, bp.type_annee, bp.prix_biens, bp.ville, bp.photos_1
+        ");
+        $reponse=[
+            'status'=>true,
+            'data'=>$data
+        ];
+        return response()->json($reponse);
+    }
+    public function getSingleBienPostulerData($id_bienspostuler)
+    {
+        $data = DB::select("SELECT 
+                count(rg.id_user) as vue,
+                bp.id_bienspostuler,
+                b.type_objet as typebien,
+                bp.type_annee as mois,
+                bp.description_biens as option,
+                bp.prix_biens as prisis,
+                bp.ville as ville,
+                bp.pub_bien as détail,
+                bp.photos_1 as image,
+                users.nom_user as nom,
+                users.image_user as sarytapaka
+            from 
+                bienspostuler bp inner join biens b on b.id_objet=bp.id_objet 
+                inner join reagir rg on bp.id_bienspostuler=rg.id_bienspostuler
+                inner join postuler pst on bp.id_bienspostuler=pst.id_bienspostuler
+                inner join users on users.id_user=pst.id_user where bp.id_bienspostuler=?
+            group by 2,3,4,5,6,7,8,9,10,11;
+        ",[$id_bienspostuler]);
+
+        $reponse=[
+            'status'=>true,
+            'data'=>$data[0]
+        ];
+        return response()->json($reponse);
+    }
+    public function getMesBienPostulerData($id_user)
+    {
+        $data = DB::select("SELECT 
+                count(rg.id_user) as vue,
+                bp.id_bienspostuler,
+                b.type_objet as typebien,
+                bp.type_annee as mois,
+                bp.description_biens as option,
+                bp.prix_biens as prisis,
+                bp.ville as ville,
+                bp.pub_bien as détail,
+                bp.photos_1 as image,
+                users.nom_user as nom,
+                users.image_user as sarytapaka
+            from 
+                bienspostuler bp inner join biens b on b.id_objet=bp.id_objet 
+                inner join reagir rg on bp.id_bienspostuler=rg.id_bienspostuler
+                inner join postuler pst on bp.id_bienspostuler=pst.id_bienspostuler
+                inner join users on users.id_user=pst.id_user where users.id_user=?
+            group by 2,3,4,5,6,7,8,9,10,11;
+        ",[$id_user]);
+
+        $reponse=[
+            'status'=>true,
+            'data'=>$data
+        ];
+        return response()->json($reponse);
+    }
+    public function getFiltreBienPostulerData($id_objet)
+    {
+        $data = DB::select("SELECT
+                COUNT(rg.id_user) AS vue,
+                bp.id_bienspostuler,
+                b.id_objet,
+                b.type_objet AS bien,
+                bp.type_annee AS type_annee,
+                bp.prix_biens AS prix,
+                bp.ville AS ville,
+                bp.photos_1 AS image
+            FROM
+                bienspostuler bp
+            INNER JOIN
+                biens b ON b.id_objet = bp.id_objet
+            INNER JOIN
+                reagir rg ON bp.id_bienspostuler = rg.id_bienspostuler
+            WHERE b.id_objet=?
+            GROUP BY
+                bp.id_bienspostuler,b.id_objet, b.type_objet, bp.type_annee, bp.prix_biens, bp.ville, bp.photos_1
+        ",[$id_objet]);
+        $reponse=[
+            'status'=>true,
+            'data'=>$data
+        ];
+        return response()->json($reponse);
+    }
+   
     public function createPostuler(Request $request)
     {
         $validator = Validator::make($request->all(), [
